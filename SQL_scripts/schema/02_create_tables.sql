@@ -94,6 +94,8 @@ TABLESPACE GS_DATA;
 
 
 
+
+
 CREATE TABLE Users (
     UserID           NUMBER GENERATED ALWAYS AS IDENTITY,
     Email            NVARCHAR2(255) NOT NULL UNIQUE,
@@ -105,6 +107,7 @@ CREATE TABLE Users (
     IsActive         NUMBER(1) DEFAULT 1,
     Avatar_uri       NVARCHAR2(255),
     Country          NVARCHAR2(255),
+    Balance NUMBER(10,2) DEFAULT 0,
     
     
     CONSTRAINT PK_User PRIMARY KEY(UserID)
@@ -163,16 +166,17 @@ CREATE TABLE Games
 )
 TABLESPACE GS_DATA;
 
+
 CREATE TABLE Screenshots(
     id NUMBER GENERATED ALWAYS AS IDENTITY,
-    gameid number not null,
+    GamePageID number not null,
     screenshotLink VARCHAR(512),
     
     CONSTRAINT PK_SShots PRIMARY KEY(id)
         USING INDEX TABLESPACE GS_INDEX,
 
-    CONSTRAINT FK_gameID FOREIGN KEY (gameid)
-        REFERENCES Games(GameID)
+    CONSTRAINT FK_gameID FOREIGN KEY (GamePageID)
+        REFERENCES GamePages(PageID)
 )
 TABLESPACE GS_DATA;
 
@@ -203,6 +207,7 @@ CREATE TABLE Reports
     ReportTo_GamePageID NUMBER,
     Tittle              NVARCHAR2(255),
     Message             NVARCHAR2(2000),
+    CreatedAt           TIMESTAMP WITH TIME ZONE,
     
     -- PRIMARY KEY
     CONSTRAINT PK_Reports PRIMARY KEY (ReportID)
@@ -246,13 +251,11 @@ TABLESPACE GS_DATA;
 
 
 
-
-
 CREATE TABLE Transactions 
 (
     ID NUMBER GENERATED ALWAYS AS IDENTITY,
-    OfferID NUMBER NOT NULL,
-    UserID  NUMBER NOT NULL,
+    OfferID NUMBER,
+    UserID  NUMBER,
     TYPE  NUMBER NOT NULL,
     Status NUMBER NOT NULL,
     Amount NUMBER(10,2) NOT NULL,
@@ -317,9 +320,13 @@ CREATE TABLE OfferGameLinks
 )
 TABLESPACE GS_DATA;
 
+
+
 CREATE  TABLE Folowers (
     GamePageId NUMBER NOT NULL,
     UserId NUMBER NOT NULL,
+    Rating NUMBER(1) CHECK (Rating BETWEEN 1 AND 5),
+    ReviewComment VARCHAR2(2000),
     
     CONSTRAINT PK_Folowers PRIMARY KEY (GamePageId,UserId)
         USING INDEX TABLESPACE GS_INDEX,
@@ -329,5 +336,21 @@ CREATE  TABLE Folowers (
     
     CONSTRAINT FK_Folowers_UserId FOREIGN KEY (UserId)
         REFERENCES Users(UserID)
+)
+TABLESPACE GS_DATA;
+
+CREATE TABLE Games_ganers
+(
+    GameID NUMBER NOT NULL,
+    Ganer_ID number NOT NULL,
+    
+    CONSTRAINT PK_Games_ganers PRIMARY KEY (GameID,Ganer_ID)
+    USING INDEX TABLESPACE GS_INDEX,
+    
+    CONSTRAINT FK_Games_ganers_GameID FOREIGN KEY (GameID)
+        REFERENCES Games(GameID),
+    
+    CONSTRAINT FK_Games_ganers_Ganer_ID FOREIGN KEY (Ganer_ID)
+        REFERENCES Geners(genreId)
 )
 TABLESPACE GS_DATA;

@@ -40,3 +40,6 @@ create UNDO tablespace gs_undo
     SIZE 250M
     AUTOEXTEND ON NEXT 50M
     maxsize 1G;
+    
+    
+GRANT EXECUTE ON SYS.DBMS_CRYPTO TO gs_admin WITH GRANT OPTION;
